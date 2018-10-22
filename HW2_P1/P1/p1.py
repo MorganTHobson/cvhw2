@@ -8,15 +8,16 @@ def conv(image, kernel):
 
     conved_image = np.zeros((H,W))
 
-    for y in range(len(image)):
-        for x in range(len(image[y])):
-            for yk in range(len(kernel)):
-                yi = y + yk - R
-                if not (yi < 0 or yi >= H):
-                    for xk in range(len(kernel[yk])):
-                        xi = x + xk - R
-                        if not (xi < 0 or xi >= W):
-                            conved_image[y][x] += kernel[yk][xk] * image[yi][xi]
+    for y in range(H):
+        for x in range(W):
+            low = R - y
+            high = y + R + 1 - H
+            left = R - x
+            right = x + R + 1 - W
+
+            window = image[max(y-R, 0):min(y+R+1,H),max(x-R, 0):min(x+R+1,W)]
+            k = kernel[max(0, 0+low):min(M, M-high), max(0, 0+left):min(M, M-right)]
+            conved_image[y][x] = min(np.multiply(window,k).sum(),255)
 
     return conved_image
 
